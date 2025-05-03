@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold">📊 Your Quiz Results</h2>
+    <p class="text-muted">Review your answers and learn from any mistakes.</p>
+  </div>
+
+  <div class="alert alert-info text-center">
+    <strong>Score:</strong>
+    {{ result.score }} <br/>
+    <strong>Time:</strong> {{ result.timestamp }}
+  </div>
+
+  {% for detail in result.details.all %}
+    <div class="card mb-4 shadow-sm border {% if detail.selected_answer.is_correct %}border-success{% else %}border-danger{% endif %}">
+      <div class="card-body">
+        <h5 class="card-title">Q{{ forloop.counter }}. {{ detail.question.text }}</h5>
+
+        <p class="mb-1">
+          <strong>Your answer:</strong>
+          <span class="{% if detail.is_correct %}text-success{% else %}text-danger{% endif %}">
+            {{ detail.selected_answer.text }}
+          </span>
+        </p>
+
+        {% if not detail.selected_answer.is_correct %}
+        <p class="mb-0 text-success">
+          <strong>Correct answer:</strong>
+          {% for ans in detail.question.answers.all %}
+            {% if ans.is_correct %}
+              {{ ans.text }}
+            {% endif %}
+          {% endfor %}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No results found for this quiz.</p>
+  {% endfor %}
+
+  <div class="text-center mt-4">
+    <a href="{% url 'quiz_list' %}" class="btn btn-outline-primary">← Back to Quiz List</a>
+  </div>
+</div>
+<div style="height: 80px;"></div>
+{% endblock %}
